@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+      </head>      
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+    
+            if (!token) {
+                window.location.href = 'login.html'; // Redireciona para a página de login se não houver token
+                return;
+            }
+    
+            try {
+                const response = await fetch('http://localhost:3000/dashboard', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+    
+                const data = await response.json();
+    
+                if (!data.success) {
+                    window.location.href = 'login.html'; // Redireciona para a página de login se o token não for válido
+                }
+            } catch (error) {
+                window.location.href = 'login.html'; // Redireciona para a página de login em caso de erro
+            }
+    
+            // Desativa o clique com o botão direito
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                window.location.href = 'file:///C:/Users/777/Desktop/Rev/site/site/tdcheats.com/dashboard.html'; // Altere o URL para o site de destino
+            });
+    
+            // Desativa atalhos de teclado para ferramentas de desenvolvedor
+            document.onkeydown = function(e) {
+                if (e.keyCode == 123 || // F12
+                    (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) || // Ctrl+Shift+I
+                    (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) || // Ctrl+Shift+C
+                    (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) { // Ctrl+U
+                    return false;
+                }
+            };
+        });
+    </script>    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</style>
+</head>
+<body>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000407;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+        }
+        .sidebar {
+    width: 200px;
+    background-color: #000407;
+    padding: 20px;
+    height: 100vh;
+    border-right: 1px solid #202020; /* Adiciona a borda à direita */
+}
+
+.sidebar h2 {
+    color: #9ea0a5;
+    margin-bottom: 30px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #9ea0a5;
+    display: flex;
+    align-items: center; /* Alinha verticalmente o ícone e o texto */
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+.sidebar a:hover {
+    color: #fff;
+}
+        .main-content {
+            flex-grow: 1;
+            padding: 0px;
+            background-color: #000407;
+        }
+        .main-content h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.sidebar a svg {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0; /* Garante que o ícone não encolha */
+}
+        .sidebar a svg.fill-current {
+            fill: currentColor; /* Para alterar a cor de preenchimento */
+        }
+        .sidebar a svg.stroke-current {
+            stroke: currentColor; /* Para alterar a cor do contorno */
+        }
+        .stats div {
+    background-color: #000407;
+    padding: 0px;
+    border-radius: 0px;
+    width: 50%;
+    text-align: center;
+    position: relative;
+    border-top: 1px solid #202020;
+    border-bottom: 1px solid #202020;
+    font-size: 14px; /* Tamanho da fonte */
+    margin-top: 50px; /* Espaçamento superior para "abaixar" a caixa */
+}
+
+.stats div p {
+    margin: 15px 0;
+}
+
+        
+        .detector {
+            position: absolute;
+            top: 40px;
+            right: 50px;
+            text-align: center;
+        }
+
+        .detector button {
+            background-color: #000407;
+            color: rgb(145, 145, 145);
+            padding: 15px 10px;
+            border: none;
+            border-radius: 0px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center; /* Alinha o ícone e o texto verticalmente */
+        }
+        .detector button svg {
+            margin-right: 8px; /* Espaço entre o ícone e o texto */
+            width: 20px;
+            height: 20px;
+        }
+        .detector button:hover {
+            background: linear-gradient(135deg, #0e0e0e, #050505);
+            transform: scale(1.05);
+        }
+        .detector button:active {
+            transform: scale(0.98);
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+        .activity-history {
+    background-color: #000407;
+    padding: 15px;
+    border-radius: 0px;
+    border-top: 1px solid #202020; /* Borda superior */
+    border-bottom: 1px solid #202020; /* Borda inferior */
+}
+
+.activity-history h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.activity-table th, .activity-table td {
+    padding: 10px;
+    text-align: left;
+}
+.activity-table th {
+    background-color: #000407;
+}
+.activity-table td {
+    background-color: #000407;
+}
+.activity-table td a {
+    color: #7289da;
+    text-decoration: none;
+}
+.activity-table td .status {
+    color: red;
+}
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin-top: 10px;
+            border-top: 1px solid #202020;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h5 style="color: #525252;">SCANNER</h5>
+            <a href="dashboard.html">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                Home
+            </a>
+            <a href="results.html">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>                       
+                Results
+            </a>
+                    <h5 style="color: #525252;">PROFILE</h5>
+            <a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />                  
+                </svg>
+                Profile
+            </a>
+            <a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />                  
+                </svg>
+                Subscription
+            </a>
+        </div>
+            <div class="main-content">
+                <h1 style="margin-left: 40px;">Welcome back</h1>
+    
+                <div class="detector">
+                    <button id="generate-pin-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                        Generate PIN
+                    </button>
+                </div>
+            <div class="stats">
+                <div>
+                    <p>Total Generated Pins</p>
+                    <h2>16635</h2>
+                </div>
+                <div>
+                    <p>Registered Users</p>
+                    <h2>8645</h2>
+                </div>
+                <div>
+                    <p>Scans</p>
+                    <h2>16518</h2>
+                </div>
+            </div>
+            <div class="activity-history">
+                <h2>Activity History</h2>
+                <table class="activity-table">
+                    <thead>
+                        <tr>
+                            <th>Pin</th>
+                            <th>Used</th>
+                            <th>Link</th>
+                            <th>Privacy</th>
+                            <th>Game</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Null</td>
+                            <td><span class="status">Not Used</span></td>
+                            <td><a href="#">View Results</a></td>
+                            <td><input type="checkbox" checked disabled></td>
+                            <td>FiveM-Free</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="footer">
+                <div>Discord</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+    
+            if (!token) {
+                window.location.href = 'login.html'; // Redireciona para a página de login se não houver token
+                return;
+            }
+    
+            try {
+                const response = await fetch('http://localhost:3000/dashboard', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+    
+                const data = await response.json();
+    
+                if (!data.success) {
+                    window.location.href = 'login.html'; // Redireciona para a página de login se o token não for válido
+                }
+            } catch (error) {
+                window.location.href = 'login.html'; // Redireciona para a página de login em caso de erro
+            }
+    
+            // Desativa o clique com o botão direito
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                window.location.href = 'https://www.youtube.com/watch?v=8yKIxC-WobI&list=RDOB7zKFw1Hv4&index=9'; // Altere o URL para o site de destino
+            });
+    
+            // Desativa atalhos de teclado para ferramentas de desenvolvedor
+            document.onkeydown = function(e) {
+                if (e.keyCode == 123 || // F12
+                    (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) || // Ctrl+Shift+I
+                    (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) || // Ctrl+Shift+C
+                    (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) { // Ctrl+U
+                    return false;
+                }
+            };
+        });
+
+        // Função para gerar um PIN de 6 dígitos numéricos
+        function generatePin() {
+            let pin = '';
+            for (let i = 0; i < 6; i++) {
+                pin += Math.floor(Math.random() * 10); // Gera um dígito aleatório de 0 a 9
+            }
+            return pin;
+        }
+
+        // Função para adicionar o novo PIN no histórico
+        function addPinToHistory(pin) {
+            const tableBody = document.querySelector('.activity-table tbody');
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td>${pin}</td>
+                <td><span class="status">Not Used</span></td>
+                <td><a href="#">View Results</a></td>
+                <td><input type="checkbox" checked disabled></td>
+                <td>FiveM-Free</td>
+            `;
+
+            tableBody.appendChild(newRow);
+        }
+
+        // Função para enviar o PIN gerado para o servidor
+        async function sendPinToServer(pin) {
+            try {
+                const response = await fetch('http://localhost:3000/add-pin', { // Altere para o URL correto do seu servidor
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ pin })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    console.log('PIN enviado para o servidor com sucesso');
+                } else {
+                    console.error('Erro ao enviar PIN para o servidor:', data.message);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar PIN para o servidor:', error);
+            }
+        }
+
+        // Event listener para o botão de gerar PIN
+        document.getElementById('generate-pin-btn').addEventListener('click', async function() {
+            const newPin = generatePin();
+            addPinToHistory(newPin);
+            await sendPinToServer(newPin);
+        });
+    </script>
+</body>
+</html>
